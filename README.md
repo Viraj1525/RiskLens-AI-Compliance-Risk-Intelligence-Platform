@@ -1,84 +1,102 @@
-# AI Compliance & Risk Intelligence Platform
+# 🚀 AI Compliance & Risk Intelligence Platform
 
-An AI-powered enterprise compliance analysis platform that automatically analyzes company documents, contracts, and policies to detect regulatory risks, security issues, and compliance violations using Retrieval-Augmented Generation (RAG).
+An **AI-powered enterprise compliance analysis platform** that automatically analyzes company documents, contracts, and policies to detect **regulatory risks, security issues, and compliance violations** using **Retrieval-Augmented Generation (RAG)**.
 
-The system allows organizations to upload documents and interact with them through an AI assistant to identify compliance risks and generate automated compliance reports.
+This platform allows organizations to **upload internal documents and interact with them through an AI assistant**, generating compliance insights and automated audit reports.
 
 ---
 
-# Features
+# ✨ Features
 
-## Document Upload & Processing
+## 📄 Document Upload & Processing
 - Upload enterprise documents (PDFs, contracts, policies)
-- Automatic text extraction and chunking
-- Document embedding and indexing
+- Automatic **text extraction and chunking**
+- Document **embedding and indexing**
 
-## AI Compliance Risk Detection
-The platform analyzes documents to detect:
+---
 
-- Data privacy violations
-- Missing compliance clauses
-- Security vulnerabilities
-- Regulatory compliance issues
+## 🧠 AI Compliance Risk Detection
+
+The system detects:
+
+- 🔒 Data privacy violations  
+- ⚠️ Missing compliance clauses  
+- 🛡️ Security policy weaknesses  
+- 📜 Regulatory risks  
 
 Example output:
 
-Risk Detected: GDPR Compliance Issue  
-Section: Data Storage Policy  
-Severity: High  
-Issue: No defined data retention period  
-Recommendation: Add a retention policy clause
+```
+Risk Detected: GDPR Compliance Issue
+Section: Data Storage Policy
+Severity: High
+Issue: No defined data retention policy
+Recommendation: Add a retention clause
+```
 
 ---
 
-## Multi-Document AI Search (RAG)
+## 🔎 Multi-Document AI Search (RAG)
 
-The system uses Retrieval-Augmented Generation to search across multiple uploaded documents.
+The platform uses **Retrieval-Augmented Generation** to analyze multiple documents.
 
 Pipeline:
 
-Document Upload  
-→ Text Extraction  
-→ Chunking  
-→ Embeddings  
-→ FAISS Vector Database  
-→ Retriever  
-→ LLM Analysis
+```
+Document Upload
+      ↓
+Text Extraction
+      ↓
+Chunking
+      ↓
+Embeddings
+      ↓
+FAISS Vector Database
+      ↓
+Retriever
+      ↓
+LLM Analysis
+```
 
 ---
 
-## Compliance Scoring
+## 📊 Compliance Scoring
 
-The system generates a compliance score based on detected risks.
+The system generates an overall **Compliance Score**.
 
 Example:
 
+```
 Compliance Score: 78 / 100
 
-High Risk Issues: 2  
-Medium Risk Issues: 3  
+High Risk Issues: 2
+Medium Risk Issues: 3
 Low Risk Issues: 1
+```
 
 ---
 
-## AI Chat with Enterprise Documents
+## 💬 AI Chat with Enterprise Documents
 
 Users can interact with documents using natural language.
 
 Example queries:
 
-"What compliance risks exist in this contract?"  
-"Does this policy comply with GDPR?"  
+```
+"What compliance risks exist in this contract?"
+"Does this policy comply with GDPR?"
 "Summarize the security risks in this document."
+```
 
 ---
 
-## Automated Compliance Reports
+## 📑 Automated Compliance Reports
 
-The system generates structured compliance reports.
+Generate structured **AI compliance audit reports**.
 
-Example report:
+Example:
 
+```
 AI Compliance Audit Report
 
 Document: security_policy.pdf
@@ -92,184 +110,200 @@ Medium Risk:
 Recommendations:
 - Implement encryption protocols
 - Strengthen password requirements
+```
 
 ---
 
-# System Architecture
+# 🏗 System Architecture
 
-Frontend (React Dashboard)  
-↓  
-FastAPI Backend  
-↓  
-Document Processing Pipeline  
-↓  
-Embedding Model  
-↓  
-FAISS Vector Database  
-↓  
-Retriever  
-↓  
-LLM (Groq)  
-↓  
-Risk Detection Engine  
-↓  
+```
+Frontend (React Dashboard)
+        ↓
+FastAPI Backend
+        ↓
+Document Processing Pipeline
+        ↓
+Embedding Model
+        ↓
+FAISS Vector Database
+        ↓
+Retriever
+        ↓
+LLM (Groq)
+        ↓
+Risk Detection Engine
+        ↓
 Compliance Score + Reports
+```
 
 ---
 
-# Tech Stack
+# 🛠 Tech Stack
 
-## Backend
-- Python
-- FastAPI
-- LangChain
-- HuggingFace Transformers
-- FAISS Vector Database
-- Groq LLM API
+### Backend
+- 🐍 Python
+- ⚡ FastAPI
+- 🔗 LangChain
+- 🤗 HuggingFace Transformers
+- 📚 FAISS Vector Database
+- 🧠 Groq LLM API
 
-## AI / NLP
+### AI / NLP
 - Retrieval-Augmented Generation (RAG)
 - Sentence Transformers
 - Semantic Search
 
-## Frontend (Planned)
-- React (Vite)
-- TailwindCSS
-- Axios
+### Frontend (Planned)
+- ⚛️ React (Vite)
+- 🎨 TailwindCSS
+- 🔌 Axios
 
-## Deployment (Planned)
-- Docker
-- AWS / GCP
+### Deployment (Planned)
+- 🐳 Docker
+- ☁️ AWS / GCP
 
 ---
 
-# Project Structure
+# 📂 Project Structure
 
+```
 AI-Compliance-Risk-Intelligence-Platform
-
-backend  
-├ routes  
-├ services  
-├ rag_pipeline  
-├ risk_engine  
-└ app.py  
-
-data  
-└ documents  
-
-embeddings  
-
-frontend  
-
-docker  
-
-requirements.txt  
-README.md  
+│
+├── backend
+│   ├── routes
+│   ├── services
+│   ├── rag_pipeline
+│   ├── risk_engine
+│   └── app.py
+│
+├── data
+│   └── documents
+│
+├── embeddings
+│
+├── frontend
+│
+├── docker
+│
+├── requirements.txt
+└── README.md
+```
 
 ---
 
-# API Endpoints
+# 🔗 API Endpoints
 
-## Upload Document
-
+### 📄 Upload Document
+```
 POST /upload-document
-
+```
 Uploads and processes a document.
 
 ---
 
-## Analyze Compliance Risk
-
+### 🔍 Analyze Compliance Risk
+```
 POST /analyze-risk
-
+```
 Runs AI analysis and returns compliance insights.
 
 ---
 
-## Chat with Documents
-
+### 💬 Chat with Documents
+```
 POST /chat
-
-Ask natural language questions about uploaded documents.
+```
+Ask questions about uploaded documents.
 
 ---
 
-## Generate Compliance Report
-
+### 📑 Generate Compliance Report
+```
 POST /generate-report
-
+```
 Generates a compliance audit report.
 
 ---
 
-## List Uploaded Documents
-
+### 📂 List Uploaded Documents
+```
 GET /documents
-
-Returns all uploaded documents.
+```
+Returns uploaded documents.
 
 ---
 
-# Installation
+# ⚙️ Installation
 
 Clone the repository:
 
-git clone https://github.com/yourusername/AI-Compliance-Risk-Intelligence-Platform.git  
-cd AI-Compliance-Risk-Intelligence-Platform  
+```bash
+git clone https://github.com/yourusername/AI-Compliance-Risk-Intelligence-Platform.git
+cd AI-Compliance-Risk-Intelligence-Platform
+```
 
 Create environment:
 
-conda create -n compliance_ai python=3.10  
-conda activate compliance_ai  
+```bash
+conda create -n compliance_ai python=3.10
+conda activate compliance_ai
+```
 
 Install dependencies:
 
-pip install -r requirements.txt  
+```bash
+pip install -r requirements.txt
+```
 
 ---
 
-# Run Backend
+# ▶️ Run Backend
 
-cd backend  
-uvicorn app:app --reload  
+```bash
+cd backend
+uvicorn app:app --reload
+```
 
-Open API documentation:
+Open API docs:
 
+```
 http://127.0.0.1:8000/docs
+```
 
 ---
 
-# Future Improvements
+# 🔮 Future Improvements
 
-- Enterprise dashboard UI
-- Risk heatmap visualization
-- Document preview
-- Cross-document compliance comparison
-- Explainable AI reasoning
-- Cloud deployment
+- 📊 Compliance risk heatmap
+- 📁 Document preview viewer
+- 📉 Risk analytics dashboard
+- 🧠 Explainable AI reasoning
+- ☁️ Cloud deployment
+- 🔐 Enterprise authentication
 
 ---
 
-# Use Cases
+# 🎯 Use Cases
 
 This platform can be used by:
 
-- Compliance teams
-- Legal departments
-- Security auditors
-- Risk advisory firms
-- Enterprise governance teams
+- 🏢 Compliance teams  
+- ⚖️ Legal departments  
+- 🔐 Security auditors  
+- 📊 Risk advisory firms  
+- 🏛 Enterprise governance teams  
 
 ---
 
-# Author
+# 👨‍💻 Author
 
-Viraj Agrawal  
+**Viraj Agrawal**
+
 AI / Machine Learning Engineer  
 Focus: Enterprise AI Systems, NLP, and RAG Architectures
 
 ---
 
-# License
+# 📜 License
 
 MIT License
