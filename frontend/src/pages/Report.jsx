@@ -1,21 +1,35 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 void motion;
 import { generateReport, getApiErrorMessage } from '../api/axios';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { FileText, Loader2, ShieldAlert, Printer, Download } from 'lucide-react';
+import { FileText, Loader2, ShieldAlert, Printer, Download, BarChart3 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const RISK_COLORS = { High: '#ef4444', Medium: '#f59e0b', Low: '#10b981' };
 
+function extractSeverityCounts(text = '') {
+    const matches = (text || '').match(/severity\s*[:\-]?\s*(high|medium|low)/gi) || [];
+    const counts = { high: 0, medium: 0, low: 0 };
+
+    matches.forEach((match) => {
+        const normalized = match.toLowerCase();
+        if (normalized.includes('high')) counts.high += 1;
+        if (normalized.includes('medium')) counts.medium += 1;
+        if (normalized.includes('low')) counts.low += 1;
+    });
+
+    return counts;
+}
+
 function parseReportStats(text) {
-    const lower = (text || '').toLowerCase();
+    const counts = extractSeverityCounts(text);
 
     return [
-        { name: 'High', value: (lower.match(/severity\s*:\s*high/g) || []).length },
-        { name: 'Medium', value: (lower.match(/severity\s*:\s*medium/g) || []).length },
-        { name: 'Low', value: (lower.match(/severity\s*:\s*low/g) || []).length },
+        { name: 'High', value: counts.high },
+        { name: 'Medium', value: counts.medium },
+        { name: 'Low', value: counts.low },
     ];
 }
 
@@ -38,6 +52,7 @@ export default function Report() {
             const analysisText = response.data?.analysis || '';
             const reportPath = response.data?.report_path || '';
             const complianceScore = response.data?.compliance_score;
+            const severityCounts = extractSeverityCounts(analysisText);
 
             setReport(analysisText);
             setStats(parseReportStats(analysisText));
@@ -50,11 +65,7 @@ export default function Report() {
             localStorage.setItem('compliance:lastAnalysis', JSON.stringify({
                 score: complianceScore,
                 analysis: analysisText,
-                severityCounts: {
-                    high: (analysisText.toLowerCase().match(/severity\s*:\s*high/g) || []).length,
-                    medium: (analysisText.toLowerCase().match(/severity\s*:\s*medium/g) || []).length,
-                    low: (analysisText.toLowerCase().match(/severity\s*:\s*low/g) || []).length,
-                },
+                severityCounts,
                 query: 'Analyze this document for compliance risks',
                 updatedAt: new Date().toISOString(),
             }));
@@ -70,6 +81,8 @@ export default function Report() {
     const handlePrint = () => {
         window.print();
     };
+
+    const hasChartData = Array.isArray(stats) && stats.some((item) => item.value > 0);
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 900 }}>
@@ -132,21 +145,66 @@ export default function Report() {
                                 <div style={{ fontWeight: 700, fontFamily: 'Outfit', fontSize: '0.95rem', color: 'var(--text-primary)', marginBottom: 18 }}>
                                     Risk Distribution
                                 </div>
-                                <ResponsiveContainer width="100%" height={180}>
-                                    <BarChart data={stats} barSize={40}>
-                                        <XAxis dataKey="name" tick={{ fill: 'var(--text-secondary)', fontSize: 13 }} axisLine={false} tickLine={false} />
-                                        <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 12 }} axisLine={false} tickLine={false} />
-                                        <Tooltip
-                                            contentStyle={{ background: '#1e293b', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text-primary)' }}
-                                            cursor={{ fill: 'rgba(255,255,255,0.04)' }}
-                                        />
-                                        <Bar dataKey="value" radius={[6, 6, 0, 0]}>
-                                            {stats.map((entry, i) => (
-                                                <Cell key={i} fill={RISK_COLORS[entry.name]} />
-                                            ))}
-                                        </Bar>
-                                    </BarChart>
-                                </ResponsiveContainer>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10, marginBottom: 18 }}>
+                                    {stats.map((item) => (
+                                        <div
+                                            key={item.name}
+                                            style={{
+                                                border: '1px solid var(--border)',
+                                                borderRadius: 12,
+                                                padding: '12px 14px',
+                                                background: 'rgba(255,255,255,0.02)',
+                                            }}
+                                        >
+                                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 4 }}>{item.name}</div>
+                                            <div style={{ fontFamily: 'Outfit', fontSize: '1.4rem', fontWeight: 700, color: RISK_COLORS[item.name] }}>{item.value}</div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {hasChartData ? (
+                                    <div style={{ width: '100%', height: 220 }}>
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart data={stats} barSize={40} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+                                                <XAxis dataKey="name" tick={{ fill: 'var(--text-secondary)', fontSize: 13 }} axisLine={false} tickLine={false} />
+                                                <YAxis
+                                                    allowDecimals={false}
+                                                    domain={[0, (dataMax) => Math.max(1, dataMax)]}
+                                                    tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
+                                                    axisLine={false}
+                                                    tickLine={false}
+                                                />
+                                                <Tooltip
+                                                    contentStyle={{ background: '#1e293b', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text-primary)' }}
+                                                    cursor={{ fill: 'rgba(255,255,255,0.04)' }}
+                                                />
+                                                <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+                                                    {stats.map((entry, i) => (
+                                                        <Cell key={i} fill={RISK_COLORS[entry.name]} />
+                                                    ))}
+                                                </Bar>
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                ) : (
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 12,
+                                            padding: '18px 16px',
+                                            borderRadius: 12,
+                                            border: '1px solid var(--border)',
+                                            background: 'rgba(255,255,255,0.02)',
+                                        }}
+                                    >
+                                        <BarChart3 size={20} color="#60a5fa" />
+                                        <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+                                            No structured severity labels were detected in the generated report, so the graph has no bars to plot yet.
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
 
@@ -193,4 +251,3 @@ export default function Report() {
         </div>
     );
 }
-

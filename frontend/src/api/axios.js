@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: '/api',
+    baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
     timeout: 60000,
 });
 
@@ -20,8 +20,8 @@ export const getApiErrorMessage = (error, fallbackMessage = 'Request failed.') =
     return fallbackMessage;
 };
 
-export const uploadDocument = (formData, onProgress) =>
-    api.post('/upload-document', formData, {
+export const uploadDocuments = (formData, onProgress) =>
+    api.post('/upload-documents', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress: (event) => {
             if (!onProgress || !event?.total) {

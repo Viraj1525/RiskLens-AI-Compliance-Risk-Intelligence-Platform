@@ -1,4 +1,4 @@
-from rag_pipeline.embeddings import model
+from rag_pipeline.embeddings import get_embedding_model
 from rag_pipeline.retriever import retrieve
 from risk_engine.compliance_checker import analyze_compliance
 from risk_engine.risk_scoring import calculate_compliance_score
@@ -14,7 +14,7 @@ def run_analysis(query):
             'compliance_score': 0
         }
 
-    query_embedding = model.encode([query])[0]
+    query_embedding = get_embedding_model().encode([query])[0]
 
     results = retrieve(
         query_embedding,

@@ -1,4 +1,4 @@
-from rag_pipeline.embeddings import model
+from rag_pipeline.embeddings import get_embedding_model
 from rag_pipeline.retriever import retrieve
 from risk_engine.compliance_checker import answer_question
 
@@ -10,7 +10,7 @@ def chat_with_documents(question, history=None):
     if document_service.VECTOR_INDEX is None:
         return 'No documents uploaded.'
 
-    query_embedding = model.encode([question])[0]
+    query_embedding = get_embedding_model().encode([question])[0]
 
     results = retrieve(
         query_embedding,

@@ -1,5 +1,6 @@
-﻿import os
+import os
 import pickle
+import shutil
 
 import numpy as np
 
@@ -12,6 +13,8 @@ from rag_pipeline.vector_store import create_faiss_index, load_faiss_index, save
 INDEX_PATH = 'embeddings/faiss_index.bin'
 CHUNKS_PATH = 'embeddings/chunks.pkl'
 UPLOAD_FOLDER = 'data/documents'
+EMBEDDINGS_FOLDER = 'embeddings'
+REPORTS_FOLDER = 'reports'
 
 
 VECTOR_INDEX = load_faiss_index()
@@ -27,7 +30,7 @@ else:
 
 
 def _persist_chunks():
-    os.makedirs('embeddings', exist_ok=True)
+    os.makedirs(EMBEDDINGS_FOLDER, exist_ok=True)
     with open(CHUNKS_PATH, 'wb') as f:
         pickle.dump(DOCUMENT_CHUNKS, f)
 
@@ -52,6 +55,42 @@ if VECTOR_INDEX is None and DOCUMENT_CHUNKS:
         _rebuild_vector_index()
     except Exception:
         VECTOR_INDEX = None
+
+
+def _clear_directory(path):
+    removed_paths = []
+
+    if not os.path.exists(path):
+        return removed_paths
+
+    for entry in os.listdir(path):
+        entry_path = os.path.join(path, entry)
+        if os.path.isdir(entry_path):
+            shutil.rmtree(entry_path, ignore_errors=True)
+        else:
+            os.remove(entry_path)
+        removed_paths.append(entry_path)
+
+    return removed_paths
+
+
+def clear_analysis_session():
+    global VECTOR_INDEX
+    global DOCUMENT_CHUNKS
+
+    removed_files = []
+
+    for path in (UPLOAD_FOLDER, EMBEDDINGS_FOLDER, REPORTS_FOLDER):
+        os.makedirs(path, exist_ok=True)
+        removed_files.extend(_clear_directory(path))
+
+    VECTOR_INDEX = None
+    DOCUMENT_CHUNKS = []
+
+    return {
+        'cleared': True,
+        'removed_files': removed_files,
+    }
 
 
 def _delete_document(document_name, delete_files=True):
@@ -116,12 +155,8 @@ def delete_document(document_name):
 
 
 def process_document(file_path):
-
     global VECTOR_INDEX
     global DOCUMENT_CHUNKS
-
-    # Replace old indexed version if same filename is uploaded again.
-    _delete_document(os.path.basename(file_path), delete_files=False)
 
     docs = load_pdf(file_path)
 

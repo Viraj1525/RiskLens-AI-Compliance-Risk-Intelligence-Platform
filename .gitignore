@@ -213,3 +213,9 @@ node_modules/
 # Generated backend artifacts
 backend/embeddings/
 backend/reports/
+backend/data/documents/*
+!backend/data/documents/.gitkeep
+
+# Local runtime files
+.run/
+logs/

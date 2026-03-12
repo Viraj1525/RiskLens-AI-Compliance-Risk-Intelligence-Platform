@@ -1,5 +1,12 @@
-﻿import re
+import re
+
 import numpy as np
+
+from config.settings import (
+    EMBEDDING_MODEL_CACHE_DIR,
+    EMBEDDING_MODEL_NAME,
+    EMBEDDING_MODEL_OFFLINE,
+)
 
 try:
     from sentence_transformers import SentenceTransformer
@@ -37,19 +44,39 @@ class LocalEmbeddingModel:
         return np.array(vectors, dtype='float32')
 
 
-if SentenceTransformer is not None:
-    try:
-        model = SentenceTransformer('all-MiniLM-L6-v2')
-    except Exception:
-        model = LocalEmbeddingModel()
-else:
-    model = LocalEmbeddingModel()
+_model = None
+
+
+def _build_sentence_transformer():
+    kwargs = {}
+
+    if EMBEDDING_MODEL_CACHE_DIR:
+        kwargs["cache_folder"] = EMBEDDING_MODEL_CACHE_DIR
+
+    if EMBEDDING_MODEL_OFFLINE:
+        kwargs["local_files_only"] = True
+
+    return SentenceTransformer(EMBEDDING_MODEL_NAME, **kwargs)
+
+
+def get_embedding_model():
+    global _model
+
+    if _model is not None:
+        return _model
+
+    if SentenceTransformer is not None:
+        try:
+            _model = _build_sentence_transformer()
+            return _model
+        except Exception:
+            pass
+
+    _model = LocalEmbeddingModel()
+    return _model
 
 
 def generate_embeddings(chunks):
-
     texts = [chunk.page_content for chunk in chunks]
-
-    embeddings = model.encode(texts)
-
+    embeddings = get_embedding_model().encode(texts)
     return np.array(embeddings).astype('float32')
