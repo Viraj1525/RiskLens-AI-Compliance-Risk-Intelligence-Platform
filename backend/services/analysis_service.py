@@ -4,9 +4,10 @@ from risk_engine.compliance_checker import analyze_compliance
 from risk_engine.risk_scoring import calculate_compliance_score
 
 from services import document_service
+from config.supabase_client import log_risk_analysis
 
 
-def run_analysis(query):
+def run_analysis(query, session_id: str | None = None):
 
     if document_service.VECTOR_INDEX is None:
         return {
@@ -40,6 +41,15 @@ def run_analysis(query):
     analysis = analyze_compliance(context, question=query)
 
     score = calculate_compliance_score(analysis)
+
+    # Best-effort logging of analysis to Supabase (if configured)
+    log_risk_analysis(
+        session_id=session_id,
+        query=query,
+        risk_summary=analysis,
+        risk_score=score,
+        metadata={"result_count": len(results)},
+    )
 
     return {
         'analysis': analysis,

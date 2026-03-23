@@ -21,6 +21,7 @@
 - [Local Setup](#-local-setup)
 - [Environment Variables](#-environment-variables)
 - [Running the App](#-running-the-app)
+- [Docker (production-style)](#-docker-production-style)
 - [Using the App](#-using-the-app)
 - [API Reference](#-api-reference)
 - [Example API Calls](#-example-api-calls)
@@ -222,6 +223,46 @@ The `start-dev.ps1` script manages PIDs (stored in `.run/`) and routes logs to `
 | Backend API | http://127.0.0.1:8000 |
 | Swagger Docs | http://127.0.0.1:8000/docs |
 | Health Check | http://127.0.0.1:8000/health |
+
+---
+
+## 🐳 Docker (production-style)
+
+1. **Configure environment** — Copy `.env.example` to `.env.production` and set real values (`GROQ_API_KEY`, `SUPABASE_*`, `FRONTEND_DEV_URL` / `ALLOWED_ORIGINS` for your domain, and `VITE_SUPABASE_*` for the frontend build).
+
+2. **Supabase schema** — In the Supabase SQL editor, run [`supabase/migrations/001_risk_analyses.sql`](supabase/migrations/001_risk_analyses.sql) to create the `risk_analyses` table.
+
+3. **Build & run** (from the project root):
+
+```bash
+# Recommended: pass env file so Compose can substitute variables and the frontend build sees Vite envs
+docker compose --env-file .env.production build
+docker compose --env-file .env.production up -d
+```
+
+**Windows (helper script):**
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\docker-up.ps1
+```
+
+4. **Verify**
+
+| Service | URL |
+|---|---|
+| Frontend (Nginx) | http://localhost:8080 |
+| Backend API | http://localhost:8000 |
+| Health | http://localhost:8000/health |
+
+The frontend container proxies `/api/*` to the backend. Large PDF uploads are allowed up to **100MB** (see `docker/nginx.conf`).
+
+5. **Smoke test**
+
+```bash
+python scripts/smoke_test.py --base-url http://127.0.0.1:8000
+```
+
+**Note:** First backend startup can take several minutes while ML dependencies initialize; the Compose health check allows up to **5 minutes** before marking the service unhealthy.
 
 ---
 

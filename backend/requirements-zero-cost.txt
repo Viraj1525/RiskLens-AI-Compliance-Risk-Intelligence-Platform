@@ -1,40 +1,21 @@
-# Backend API
+# Optimized for Render Free Tier (512MB RAM)
+# Excludes torch/transformers to use the built-in LocalEmbeddingModel fallback.
+
 fastapi
 uvicorn[standard]
 python-multipart
 python-dotenv
-
-# AI / RAG
 langchain
 langchain-community
 langchain-core
 langchain-text-splitters
-
-# Embeddings / Models
-sentence-transformers
-transformers
-torch
-
-# Document Processing
 pypdf
 pymupdf
 reportlab
-
-# OCR
-easyocr
-opencv-python
-
-# Vector Database
 faiss-cpu
-
-# LLM API
 groq
-
-# Database
 sqlalchemy
 psycopg2-binary
-
-# Utilities
 numpy
 pandas
 tqdm

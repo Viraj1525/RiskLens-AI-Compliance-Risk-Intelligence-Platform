@@ -1,8 +1,10 @@
-﻿import os
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
 
 from config.settings import get_allowed_origins
 from routes.upload_routes import router as upload_router
@@ -17,6 +19,24 @@ app = FastAPI(
     description="AI-powered system to detect compliance risks in enterprise documents",
     version="1.0.0",
 )
+
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    """Basic security headers for production deployments."""
+
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        response.headers.setdefault(
+            "Permissions-Policy",
+            "camera=(), microphone=(), geolocation=()",
+        )
+        return response
+
+
+app.add_middleware(SecurityHeadersMiddleware)
 
 app.add_middleware(
     CORSMiddleware,

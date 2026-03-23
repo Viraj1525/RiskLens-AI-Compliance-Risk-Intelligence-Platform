@@ -219,3 +219,8 @@ backend/data/documents/*
 # Local runtime files
 .run/
 logs/
+
+# Ignore all .env files EXCEPT the example template
+.env.*
+!.env.example
+
