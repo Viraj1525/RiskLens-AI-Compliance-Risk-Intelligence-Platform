@@ -7,6 +7,7 @@ import Upload from './pages/Upload';
 import Analyze from './pages/Analyze';
 import Chat from './pages/Chat';
 import Report from './pages/Report';
+import Flowchart from './pages/Flowchart';
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
               <Route path="/analyze" element={<Analyze />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/report" element={<Report />} />
+              <Route path="/flowchart" element={<Flowchart />} />
             </Routes>
           </main>
         </div>

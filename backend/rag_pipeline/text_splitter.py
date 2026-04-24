@@ -1,7 +1,8 @@
-﻿from rag_pipeline.document_loader import SimpleDocument
+from rag_pipeline.document_loader import SimpleDocument
 
 
 def _fallback_split(documents, chunk_size=1000, chunk_overlap=200):
+    """Fallback text splitter when langchain_text_splitters is unavailable."""
     chunks = []
 
     stride = max(1, chunk_size - chunk_overlap)
@@ -30,6 +31,7 @@ def _fallback_split(documents, chunk_size=1000, chunk_overlap=200):
 
 
 def split_documents(documents):
+    """Split documents into chunks for embedding."""
 
     try:
         from langchain_text_splitters import RecursiveCharacterTextSplitter

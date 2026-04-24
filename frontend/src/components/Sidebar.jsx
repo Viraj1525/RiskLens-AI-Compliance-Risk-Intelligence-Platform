@@ -1,4 +1,4 @@
-﻿import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 void motion;
@@ -8,6 +8,7 @@ import {
     ShieldAlert,
     MessageSquare,
     FileText,
+    GitBranch,
     Shield,
     ChevronRight,
 } from 'lucide-react';
@@ -18,6 +19,7 @@ const navItems = [
     { to: '/analyze', icon: ShieldAlert, label: 'Risk Analysis' },
     { to: '/chat', icon: MessageSquare, label: 'AI Chat' },
     { to: '/report', icon: FileText, label: 'Compliance Report' },
+    { to: '/flowchart', icon: GitBranch, label: 'Doc Flowchart' },
 ];
 
 export default function Sidebar() {

@@ -12,6 +12,7 @@ from routes.analysis_routes import router as analysis_router
 from routes.chat_routes import router as chat_router
 from routes.report_routes import router as report_router
 from routes.document_routes import router as document_router
+from routes.flowchart_routes import router as flowchart_router
 from services.document_service import clear_analysis_session
 
 app = FastAPI(
@@ -51,6 +52,7 @@ app.include_router(analysis_router)
 app.include_router(chat_router)
 app.include_router(report_router)
 app.include_router(document_router)
+app.include_router(flowchart_router)
 
 os.makedirs("reports", exist_ok=True)
 app.mount("/reports", StaticFiles(directory="reports"), name="reports")

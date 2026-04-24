@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir /b)",
+      "Bash(dir frontend\\\\src /s /b)",
+      "Bash(rm *)",
+      "Bash(npm run *)",
+      "Bash(python -c \"from app import app; print\\('Backend imports OK'\\)\")"
+    ]
+  }
+}

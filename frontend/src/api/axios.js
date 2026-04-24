@@ -47,4 +47,7 @@ export const sendChatMessage = (question, history = []) =>
 export const generateReport = (query) =>
     api.post('/generate-report', query ? { query } : {});
 
+export const generateFlowchart = (documentName) =>
+    api.post('/generate-flowchart', documentName ? { document_name: documentName } : {});
+
 export default api;
