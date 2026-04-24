@@ -1,132 +1,267 @@
-# 🛡️ AI Compliance & Risk Intelligence Platform
+# AI Compliance & Risk Intelligence Platform
 
-> An AI-powered platform for enterprise document compliance analysis — upload PDFs, index them with a local RAG pipeline, and get intelligent compliance insights, risk analysis, and downloadable reports.
+An end-to-end platform for compliance and risk analysis of enterprise PDF documents using Retrieval-Augmented Generation (RAG), heuristic + LLM analysis, interactive chat, and downloadable reports.
 
-![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat-square&logo=fastapi&logoColor=white)
-![React](https://img.shields.io/badge/React-18+-61DAFB?style=flat-square&logo=react&logoColor=black)
-![LangChain](https://img.shields.io/badge/LangChain-RAG-1C3C3C?style=flat-square)
-![Groq](https://img.shields.io/badge/LLM-Groq-F55036?style=flat-square)
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)
+## What This Project Does
 
----
+1. Upload one or more PDF documents.
+2. Extract text, split into chunks, and generate embeddings.
+3. Index embeddings in a FAISS (or NumPy fallback) vector index.
+4. Run compliance risk analysis and score results.
+5. Ask contextual questions through chat.
+6. Generate PDF reports.
+7. Generate Mermaid flowcharts from document structure.
+8. Optionally log analysis events to Supabase.
 
-## 📋 Table of Contents
+## Core Features
 
-- [Overview](#-overview)
-- [Key Features](#-key-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Prerequisites](#-prerequisites)
-- [Local Setup](#-local-setup)
-- [Environment Variables](#-environment-variables)
-- [Running the App](#-running-the-app)
-- [Docker (production-style)](#-docker-production-style)
-- [Using the App](#-using-the-app)
-- [API Reference](#-api-reference)
-- [Example API Calls](#-example-api-calls)
-- [Storage Behavior](#-storage-behavior)
-- [Use Cases](#-use-cases)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-- [Author](#-author)
-- [License](#-license)
+- Multi-file PDF upload (`/upload-document`, `/upload-documents`)
+- Session-based document indexing and retrieval
+- Semantic search over indexed document chunks
+- AI compliance analysis (`/analyze-risk`)
+- Conversational document chat with history (`/chat`)
+- Compliance report generation with downloadable PDF (`/generate-report`)
+- Mermaid flowchart generation (`/generate-flowchart`)
+- Document listing and deletion (`/documents`, `DELETE /documents/{document_name}`)
+- Optional Supabase logging for risk analyses
+- Dockerized deployment (FastAPI + Nginx)
 
----
+## Architecture
 
-## 🔍 Overview
+### Backend flow
 
-The **AI Compliance & Risk Intelligence Platform** is a full-stack application that enables enterprise teams to analyze legal, regulatory, and policy documents using AI. Simply upload one or more PDF documents, and the platform indexes them into a local RAG (Retrieval-Augmented Generation) pipeline. You can then query your documents for compliance gaps, ask natural-language questions, and generate professional compliance reports — all in one workflow.
+`FastAPI routes -> service layer -> RAG pipeline -> risk engine -> response/report/logging`
 
-Built with a **FastAPI** backend, a **React + Vite** frontend, **LangChain** for retrieval orchestration, **FAISS** for vector search, and **Groq** for fast LLM inference.
+### Frontend flow
 
----
+`React pages -> Axios client (/api proxy) -> FastAPI endpoints -> UI state + visualizations`
 
-## ✨ Key Features
+## Complete Technology and Keyword Inventory
 
-- 📄 **Batch PDF Upload** — Upload one or multiple PDFs in a single session
-- 🧠 **RAG Pipeline** — Documents are chunked, embedded, and indexed via FAISS for semantic retrieval
-- 🔍 **Compliance Analysis** — Run targeted risk and compliance queries across all indexed documents
-- 💬 **Multi-document Chat** — Ask natural-language questions across your entire document set
-- 📊 **Report Generation** — Download a professional compliance summary as a PDF (via ReportLab)
-- 🗂️ **Session Management** — Add or remove documents; sessions auto-reset on backend restart or new upload batch
-- ⚡ **Groq LLM** — Fast inference with `llama-3.3-70b-versatile`; graceful heuristic fallback when unavailable
-- 🔌 **OpenAPI Docs** — Interactive Swagger UI available at `/docs`
+This section is intentionally explicit and based on the current repository files.
 
----
+### Backend runtime and API
 
-## 🛠️ Tech Stack
+- Python 3.11 (Docker) / Python 3.10+ (local compatible)
+- FastAPI
+- Uvicorn (`uvicorn[standard]`)
+- Starlette middleware (`BaseHTTPMiddleware`, static files)
+- Pydantic / pydantic-settings
+- python-dotenv
+- python-multipart
 
-| Layer | Technology |
-|---|---|
-| **Backend** | FastAPI, Uvicorn, Python 3.10+ |
-| **Frontend** | React 18, Vite, Axios |
-| **RAG / Retrieval** | LangChain, sentence-transformers (`all-MiniLM-L6-v2`), FAISS |
-| **LLM** | Groq API (`llama-3.3-70b-versatile`) |
-| **Report Generation** | ReportLab |
-| **Dev Tooling** | PowerShell scripts, `.cmd` launchers |
+### RAG, embeddings, and retrieval
 
----
+- LangChain (`langchain`, `langchain-core`, `langchain-community`)
+- LangChain text splitters (`langchain-text-splitters`, `RecursiveCharacterTextSplitter`)
+- PyPDFLoader (LangChain community loader)
+- pypdf fallback PDF extraction (`PdfReader`)
+- sentence-transformers (`all-MiniLM-L6-v2` by default)
+- FAISS (`faiss-cpu`) vector index
+- NumPy fallback vector index (`NumpyIndex`) when FAISS is unavailable
+- Local hash-based embedding fallback (`LocalEmbeddingModel`) when sentence-transformers is unavailable
 
-## 📁 Project Structure
+### AI and analysis
 
+- Groq API (`groq` SDK)
+- Default model keyword: `llama-3.3-70b-versatile`
+- Heuristic fallback risk analysis rules (keyword + severity)
+- Heuristic chat fallback (keyword overlap + sentence ranking)
+- Compliance score heuristics (`High`, `Medium`, `Low` impact)
+
+### Document/report/flowchart processing
+
+- ReportLab PDF generation
+- Mermaid.js flowchart code generation
+- Mermaid rendering in frontend via dynamic ESM import from jsDelivr CDN
+- Flowchart sanitization logic for malformed Mermaid node syntax
+
+### Database and persistence integrations
+
+- Supabase REST API integration via `requests`
+- PostgreSQL ecosystem dependencies present: `sqlalchemy`, `psycopg2-binary`
+- Supabase SQL migration for `risk_analyses` table (`jsonb`, `uuid`, `timestamptz`)
+
+### Frontend framework and libraries
+
+- React 19
+- React DOM 19
+- Vite 7
+- React Router DOM 7
+- Axios
+- Framer Motion
+- React Hot Toast
+- React Dropzone
+- Lucide React
+- Recharts
+- Tailwind CSS 4 + `@tailwindcss/vite`
+- ESLint 9 + React Hooks / React Refresh plugins
+
+### Deployment and ops
+
+- Docker Compose
+- Docker multi-stage builds
+- Nginx reverse proxy + SPA routing
+- PowerShell automation scripts (`start-dev.ps1`, `stop-dev.ps1`, `scripts/docker-up.ps1`)
+- Health check smoke test (`scripts/smoke_test.py`)
+- Vercel rewrite config for frontend-to-backend API routing
+
+### Additional dependencies currently listed in `requirements.txt`
+
+- `transformers`
+- `torch`
+- `pymupdf`
+- `easyocr`
+- `opencv-python`
+- `pandas`
+- `tqdm`
+
+These are present in dependency files; current core execution paths primarily use the components listed above.
+
+## Project Structure
+
+```text
+.
+|-- backend/
+|   |-- app.py
+|   |-- config/
+|   |   |-- settings.py
+|   |   `-- supabase_client.py
+|   |-- rag_pipeline/
+|   |   |-- document_loader.py
+|   |   |-- text_splitter.py
+|   |   |-- embeddings.py
+|   |   |-- retriever.py
+|   |   `-- vector_store.py
+|   |-- risk_engine/
+|   |   |-- compliance_checker.py
+|   |   `-- risk_scoring.py
+|   |-- routes/
+|   |   |-- upload_routes.py
+|   |   |-- analysis_routes.py
+|   |   |-- chat_routes.py
+|   |   |-- report_routes.py
+|   |   |-- document_routes.py
+|   |   `-- flowchart_routes.py
+|   `-- services/
+|       |-- document_service.py
+|       |-- analysis_service.py
+|       |-- chat_service.py
+|       |-- report_service.py
+|       `-- flowchart_service.py
+|-- frontend/
+|   |-- package.json
+|   |-- vite.config.js
+|   |-- vercel.json
+|   `-- src/
+|       |-- App.jsx
+|       |-- main.jsx
+|       |-- api/axios.js
+|       |-- components/
+|       |   |-- Sidebar.jsx
+|       |   `-- Topbar.jsx
+|       `-- pages/
+|           |-- Dashboard.jsx
+|           |-- Upload.jsx
+|           |-- Analyze.jsx
+|           |-- Chat.jsx
+|           |-- Report.jsx
+|           `-- Flowchart.jsx
+|-- docker/
+|   |-- backend.Dockerfile
+|   |-- frontend.Dockerfile
+|   `-- nginx.conf
+|-- scripts/
+|   |-- docker-up.ps1
+|   `-- smoke_test.py
+|-- supabase/
+|   |-- config.toml
+|   `-- migrations/001_risk_analyses.sql
+|-- docker-compose.yml
+|-- requirements.txt
+|-- .env.example
+|-- start-dev.ps1
+|-- stop-dev.ps1
+`-- README.md
 ```
-AI-Compliance-Risk-Intelligence-Platform/
-├── backend/
-│   ├── app.py                  # FastAPI application entry point
-│   ├── config/                 # Configuration & environment loading
-│   ├── data/documents/         # Uploaded PDFs (session-scoped)
-│   ├── rag_pipeline/           # Chunking, embedding, FAISS indexing
-│   ├── risk_engine/            # Compliance & risk heuristics
-│   ├── routes/                 # API route definitions
-│   └── services/               # Business logic & report generation
-├── frontend/
-│   ├── src/                    # React components & pages
-│   └── package.json
-├── .env.example                # Environment variable template
-├── requirements.txt            # Python dependencies
-├── setup_project.py            # Project setup helper
-├── start-dev.ps1               # Windows: start both servers
-├── stop-dev.ps1                # Windows: stop tracked servers
-├── backend_run.cmd             # Quick backend launcher
-├── frontend_run.cmd            # Quick frontend launcher
-└── README.md
-```
 
----
+## API Reference (Accurate to Current Code)
 
-## ✅ Prerequisites
+### Health and root
 
-- **Python** 3.10 or newer
-- **Node.js** 18 or newer & **npm**
-- A free **[Groq API key](https://console.groq.com/)** for LLM-powered analysis
+- `GET /` -> root status message
+- `GET /health` -> health check
 
----
+### Upload and document management
 
-## 🚀 Local Setup
+- `POST /upload-document` (multipart, single `file`)
+- `POST /upload-documents` (multipart, multiple `files`)
+- `GET /documents`
+- `DELETE /documents/{document_name}`
 
-### 1. Clone the Repository
+### Analysis, chat, report, flowchart
 
-```bash
-git clone https://github.com/Viraj1525/AI-Compliance-Risk-Intelligence-Platform.git
-cd AI-Compliance-Risk-Intelligence-Platform
-```
+- `POST /analyze-risk`
+  - Body: `{ "query": "..." }` (optional)
+- `POST /chat`
+  - Body: `{ "question": "...", "history": [{ "role": "user|assistant", "content": "..." }] }`
+- `POST /generate-report`
+  - Body: `{ "query": "..." }` (optional)
+- `POST /generate-flowchart`
+  - Body: `{ "document_name": "..." }` (optional, omit for all docs)
 
-### 2. Set Up the Python Environment
+Swagger docs: `http://127.0.0.1:8000/docs`
+
+## Environment Variables
+
+Copy `.env.example` to `.env` (local) or `.env.production` (docker/prod).
+
+### AI / RAG
+
+- `GROQ_API_KEY`
+- `GROQ_MODEL_NAME`
+- `EMBEDDING_MODEL_NAME`
+- `EMBEDDING_MODEL_OFFLINE`
+- `EMBEDDING_MODEL_CACHE_DIR`
+
+### Backend
+
+- `API_HOST`
+- `API_PORT`
+- `APP_ENV`
+
+### CORS / frontend connectivity
+
+- `FRONTEND_DEV_URL`
+- `ALLOWED_ORIGINS`
+
+### Vite and frontend runtime
+
+- `VITE_API_BASE_URL`
+- `VITE_API_PROXY_TARGET`
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+### Supabase backend logging
+
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+## Local Development
+
+### 1) Install backend dependencies
 
 ```bash
 python -m venv .venv
-
-# Windows
+# Windows:
 .venv\Scripts\activate
-
-# macOS / Linux
+# macOS/Linux:
 source .venv/bin/activate
-
 pip install -r requirements.txt
 ```
 
-### 3. Install Frontend Dependencies
+### 2) Install frontend dependencies
 
 ```bash
 cd frontend
@@ -134,270 +269,82 @@ npm install
 cd ..
 ```
 
-### 4. Configure Environment Variables
+### 3) Configure environment
 
 ```bash
-cp .env.example .env
+copy .env.example .env
 ```
 
-Open `.env` and set at minimum:
+### 4) Run backend and frontend
 
-```env
-GROQ_API_KEY=your_groq_api_key_here
-```
+Terminal A:
 
-See the full [Environment Variables](#-environment-variables) section below for all options.
-
----
-
-## ⚙️ Environment Variables
-
-```env
-# ── LLM ──────────────────────────────────────────────────
-GROQ_API_KEY=your_groq_api_key
-GROQ_MODEL_NAME=llama-3.3-70b-versatile
-
-# ── Embeddings ───────────────────────────────────────────
-EMBEDDING_MODEL_NAME=all-MiniLM-L6-v2
-EMBEDDING_MODEL_OFFLINE=false
-# EMBEDDING_MODEL_CACHE_DIR=D:\models\sentence-transformers
-
-# ── Backend ──────────────────────────────────────────────
-API_HOST=127.0.0.1
-API_PORT=8000
-
-# ── Frontend / CORS ──────────────────────────────────────
-FRONTEND_DEV_URL=http://127.0.0.1:5173
-ALLOWED_ORIGINS=http://127.0.0.1:5173
-
-# ── Vite Proxy ───────────────────────────────────────────
-VITE_API_BASE_URL=/api
-VITE_API_PROXY_TARGET=http://127.0.0.1:8000
-```
-
-| Variable | Description |
-|---|---|
-| `GROQ_API_KEY` | Required for LLM analysis & chat. Without it, responses fall back to heuristics. |
-| `EMBEDDING_MODEL_OFFLINE` | Set to `true` to load embeddings from local cache (no internet needed). |
-| `EMBEDDING_MODEL_CACHE_DIR` | Local path to a cached sentence-transformers model. |
-| `VITE_API_PROXY_TARGET` | The backend URL that Vite forwards `/api` requests to in development. |
-
----
-
-## ▶️ Running the App
-
-### Option 1 — Manual (Cross-Platform)
-
-Open **two terminals** from the project root:
-
-**Terminal 1 — Backend:**
 ```bash
 cd backend
-../.venv/Scripts/python -m uvicorn app:app --host 127.0.0.1 --port 8000 --reload
-# macOS/Linux: ../.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 8000 --reload
+..\.venv\Scripts\python -m uvicorn app:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-**Terminal 2 — Frontend:**
+Terminal B:
+
 ```bash
 cd frontend
 npm run dev -- --host 127.0.0.1 --port 5173
 ```
 
-### Option 2 — PowerShell Scripts (Windows)
+### 5) Windows helper scripts
 
 ```powershell
-# Start both servers
 powershell -ExecutionPolicy Bypass -File .\start-dev.ps1
-
-# Stop both servers
 powershell -ExecutionPolicy Bypass -File .\stop-dev.ps1
 ```
 
-The `start-dev.ps1` script manages PIDs (stored in `.run/`) and routes logs to `logs/`.
-
-### Access Points
-
-| Service | URL |
-|---|---|
-| Frontend App | http://127.0.0.1:5173 |
-| Backend API | http://127.0.0.1:8000 |
-| Swagger Docs | http://127.0.0.1:8000/docs |
-| Health Check | http://127.0.0.1:8000/health |
-
----
-
-## 🐳 Docker (production-style)
-
-1. **Configure environment** — Copy `.env.example` to `.env.production` and set real values (`GROQ_API_KEY`, `SUPABASE_*`, `FRONTEND_DEV_URL` / `ALLOWED_ORIGINS` for your domain, and `VITE_SUPABASE_*` for the frontend build).
-
-2. **Supabase schema** — In the Supabase SQL editor, run [`supabase/migrations/001_risk_analyses.sql`](supabase/migrations/001_risk_analyses.sql) to create the `risk_analyses` table.
-
-3. **Build & run** (from the project root):
+## Docker Deployment
 
 ```bash
-# Recommended: pass env file so Compose can substitute variables and the frontend build sees Vite envs
 docker compose --env-file .env.production build
 docker compose --env-file .env.production up -d
 ```
 
-**Windows (helper script):**
+URLs:
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\docker-up.ps1
-```
+- Frontend (Nginx): `http://localhost:8080`
+- Backend API: `http://localhost:8000`
+- Health: `http://localhost:8000/health`
 
-4. **Verify**
-
-| Service | URL |
-|---|---|
-| Frontend (Nginx) | http://localhost:8080 |
-| Backend API | http://localhost:8000 |
-| Health | http://localhost:8000/health |
-
-The frontend container proxies `/api/*` to the backend. Large PDF uploads are allowed up to **100MB** (see `docker/nginx.conf`).
-
-5. **Smoke test**
+Smoke test:
 
 ```bash
 python scripts/smoke_test.py --base-url http://127.0.0.1:8000
 ```
 
-**Note:** First backend startup can take several minutes while ML dependencies initialize; the Compose health check allows up to **5 minutes** before marking the service unhealthy.
+## Storage and Session Behavior
 
----
+- Uploaded files: `backend/data/documents/`
+- Vector index and chunks: `backend/embeddings/`
+- Generated reports: `backend/reports/`
 
-## 🖥️ Using the App
+Session reset behavior:
 
-1. **Upload** — Go to the upload page and select one or more PDFs. All files in the batch are indexed together into a shared session.
-2. **Analyze** — Navigate to the Analyze tab and run compliance or risk queries (e.g., *"Identify GDPR violations"* or *"Summarize data retention risks"*).
-3. **Chat** — Use the Chat interface to ask free-form questions across all indexed documents.
-4. **Report** — Generate and download a professional PDF compliance report.
-5. **Manage** — View indexed documents and remove individual files from the session.
+- Uploading a new batch clears previous session state.
+- Backend startup clears analysis session state.
 
-> **Note:** Uploading a new batch clears the previous session. Restarting the backend also clears temporary files and index data.
+## Supabase Logging Setup
 
----
+1. Configure Supabase env variables.
+2. Run `supabase/migrations/001_risk_analyses.sql` in Supabase SQL Editor.
+3. Backend will log best-effort risk analysis events to `risk_analyses`.
 
-## 📡 API Reference
+If Supabase variables are missing or network fails, core analysis still works (logging is non-blocking).
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/` | Root status check |
-| `GET` | `/health` | Backend health check |
-| `POST` | `/upload-document` | Upload a single PDF |
-| `POST` | `/upload-documents` | Upload multiple PDFs in one batch |
-| `POST` | `/analyze-risk` | Run compliance or risk analysis |
-| `POST` | `/chat` | Ask questions across indexed documents |
-| `POST` | `/generate-report` | Generate a downloadable compliance PDF |
-| `GET` | `/documents` | List documents indexed in the current session |
-| `DELETE` | `/documents/{document_name}` | Remove a specific document from the session |
+## Troubleshooting
 
-Full interactive documentation is available at **[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)**.
+- `No documents uploaded yet.` -> Upload PDFs first.
+- `No relevant context found` -> Try a more specific query.
+- Weak AI responses -> Validate `GROQ_API_KEY` and model availability.
+- Slow first run -> Embedding/model initialization can take time.
+- CORS/API issues -> Check `ALLOWED_ORIGINS`, `FRONTEND_DEV_URL`, and Vite proxy settings.
+- Flowchart render errors -> Regenerate; sanitizer and fallback heuristics are already built in.
 
----
+## License
 
-## 🔧 Example API Calls
-
-**Upload a single document:**
-```bash
-curl -X POST "http://127.0.0.1:8000/upload-document" \
-  -H "Content-Type: multipart/form-data" \
-  -F "file=@sample.pdf"
-```
-
-**Upload multiple documents:**
-```bash
-curl -X POST "http://127.0.0.1:8000/upload-documents" \
-  -H "Content-Type: multipart/form-data" \
-  -F "files=@policy.pdf" \
-  -F "files=@contract.pdf"
-```
-
-**Run a compliance analysis:**
-```bash
-curl -X POST "http://127.0.0.1:8000/analyze-risk" \
-  -H "Content-Type: application/json" \
-  -d '{"query": "Analyze these documents for GDPR and data security risks"}'
-```
-
-**Ask a question via chat:**
-```bash
-curl -X POST "http://127.0.0.1:8000/chat" \
-  -H "Content-Type: application/json" \
-  -d '{"query": "What are the key data retention obligations mentioned?"}'
-```
-
-**Generate a compliance report:**
-```bash
-curl -X POST "http://127.0.0.1:8000/generate-report" \
-  -H "Content-Type: application/json" \
-  -d '{"query": "Create an executive compliance summary"}'
-```
-
----
-
-## 💾 Storage Behavior
-
-This project uses lightweight session-scoped local storage:
-
-| Location | Contents |
-|---|---|
-| `backend/data/documents/` | Uploaded PDFs for the current session |
-| `backend/reports/` | Generated compliance report PDFs |
-| In-memory / local FAISS | Embeddings and chunk metadata for the active session |
-
-**Auto-cleared when:**
-- The backend server restarts
-- A new upload batch is submitted
-
-This design ensures a clean slate for every new analysis session without requiring a database.
-
----
-
-## 🏢 Use Cases
-
-- **Enterprise compliance review** — Audit internal policies against regulatory frameworks (GDPR, HIPAA, SOC 2)
-- **Legal document analysis** — Surface risk clauses and obligations in contracts
-- **Data privacy verification** — Check privacy policies for gaps or non-compliance
-- **Internal governance monitoring** — Evaluate governance documents against company standards
-- **Risk management automation** — Automate first-pass risk triage across large document sets
-
----
-
-## 🔎 Troubleshooting
-
-| Issue | Solution |
-|---|---|
-| Frontend loads but API calls fail | Ensure the backend is running on port `8000` |
-| Analysis returns weak or generic results | Verify `GROQ_API_KEY` is correctly set in `.env` |
-| Slow startup on first run | Normal — the embedding model (`all-MiniLM-L6-v2`) initializes on first load |
-| Want offline embeddings | Cache the model locally and set `EMBEDDING_MODEL_OFFLINE=true` |
-| PowerShell script blocked | Run with `-ExecutionPolicy Bypass` flag |
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! To get started:
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature-name`
-3. Commit your changes: `git commit -m "feat: add your feature"`
-4. Push to your branch: `git push origin feature/your-feature-name`
-5. Open a Pull Request
-
-Please keep PRs focused and include a brief description of what changed and why.
-
----
-
-## 👤 Author
-
-**Viraj Agrawal** — AI Developer focused on Generative AI, Retrieval-Augmented Generation (RAG), and AI-powered enterprise applications.
-
-- GitHub: [@Viraj1525](https://github.com/Viraj1525)
-
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
+MIT. See `LICENSE`.
