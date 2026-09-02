@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 
-from config.settings import get_allowed_origins
+from config.settings import get_allowed_origins, get_cors_origin_regex
 from routes.upload_routes import router as upload_router
 from routes.analysis_routes import router as analysis_router
 from routes.chat_routes import router as chat_router
@@ -39,9 +39,11 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
 app.add_middleware(SecurityHeadersMiddleware)
 
+_cors_origin_regex = get_cors_origin_regex()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=get_allowed_origins(),
+    allow_origin_regex=_cors_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

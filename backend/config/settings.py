@@ -55,6 +55,19 @@ def get_allowed_origins() -> list[str]:
     return [origin.strip() for origin in raw.split(",") if origin.strip()]
 
 
+def get_cors_origin_regex() -> str | None:
+    """Optional regex for preview deployments (e.g. Vercel preview URLs)."""
+    explicit = os.getenv("ALLOWED_ORIGIN_REGEX", "").strip()
+    if explicit:
+        return explicit
+
+    allow_vercel = os.getenv("ALLOW_VERCEL_PREVIEWS", "").lower() in {"1", "true", "yes"}
+    if allow_vercel:
+        return r"https://.*\.vercel\.app"
+
+    return None
+
+
 # Backwards-compatible module-level names (used by rag_pipeline, risk_engine, etc.)
 _s = get_settings()
 MODEL_NAME = _s.groq_model_name

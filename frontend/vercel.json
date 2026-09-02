@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://ai-compliance-backend.onrender.com/:path*"
+      "destination": "https://risklens-api.onrender.com/:path*"
     }
   ]
 }

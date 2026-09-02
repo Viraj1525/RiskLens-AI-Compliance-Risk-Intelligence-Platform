@@ -2,7 +2,8 @@ import axios from 'axios';
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
-    timeout: 60000,
+    // Render free tier can cold-start; uploads/analysis may take longer than 60s.
+    timeout: 120000,
 });
 
 api.interceptors.response.use(
