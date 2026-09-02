@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { motion, AnimatePresence } from 'framer-motion';
 
-void motion;
 import { uploadDocuments, getDocuments, deleteDocument, getApiErrorMessage } from '../api/axios';
 import { Upload as UploadIcon, FileText, Loader2, CloudUpload, Trash2, Files } from 'lucide-react';
 import toast from 'react-hot-toast';

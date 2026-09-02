@@ -12,17 +12,10 @@ langchain-text-splitters
 
 # Embeddings / Models
 sentence-transformers
-transformers
-torch
 
 # Document Processing
 pypdf
-pymupdf
 reportlab
-
-# OCR
-easyocr
-opencv-python
 
 # Vector Database
 faiss-cpu

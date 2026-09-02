@@ -65,11 +65,19 @@ def _clear_directory(path):
 
     for entry in os.listdir(path):
         entry_path = os.path.join(path, entry)
-        if os.path.isdir(entry_path):
-            shutil.rmtree(entry_path, ignore_errors=True)
-        else:
-            os.remove(entry_path)
-        removed_paths.append(entry_path)
+        try:
+            if os.path.isdir(entry_path):
+                shutil.rmtree(entry_path, ignore_errors=True)
+            else:
+                os.remove(entry_path)
+            removed_paths.append(entry_path)
+        except PermissionError:
+            # Windows can keep files locked while a client still has them open.
+            continue
+        except OSError as exc:
+            if getattr(exc, "winerror", None) == 32:
+                continue
+            raise
 
     return removed_paths
 

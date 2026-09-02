@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-void motion;
 import { generateFlowchart, getDocuments, getApiErrorMessage } from '../api/axios';
 import {
     GitBranch, Loader2, FileText, Download, Copy, Check,

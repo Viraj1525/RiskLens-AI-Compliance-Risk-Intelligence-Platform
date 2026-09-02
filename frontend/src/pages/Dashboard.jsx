@@ -1,7 +1,5 @@
 ﻿import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-
-void motion;
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { getDocuments } from '../api/axios';
 import { ShieldCheck, ShieldAlert, FileText, TrendingUp, AlertTriangle, AlertOctagon, Info } from 'lucide-react';

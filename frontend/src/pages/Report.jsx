@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-void motion;
 import { generateReport, getApiErrorMessage } from '../api/axios';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { FileText, Loader2, ShieldAlert, Printer, Download, BarChart3 } from 'lucide-react';

@@ -1,7 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-
-void motion;
 import { sendChatMessage, getApiErrorMessage } from '../api/axios';
 import { Send, Loader2, Bot, User } from 'lucide-react';
 import toast from 'react-hot-toast';

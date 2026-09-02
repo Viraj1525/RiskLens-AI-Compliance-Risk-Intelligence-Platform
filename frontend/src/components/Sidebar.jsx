@@ -1,7 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-
-void motion;
 import {
     LayoutDashboard,
     Upload,

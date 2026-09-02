@@ -1,7 +1,6 @@
 ﻿import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-void motion;
 import { analyzeRisk, getApiErrorMessage } from '../api/axios';
 import { ShieldAlert, Search, Loader2, ChevronDown, ChevronUp, AlertOctagon, AlertTriangle, Info, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
