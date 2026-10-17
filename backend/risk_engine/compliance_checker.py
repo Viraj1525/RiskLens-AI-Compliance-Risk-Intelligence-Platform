@@ -194,6 +194,9 @@ User Question (focus your analysis on this, if provided):
 
 Document Text:
 {context}
+
+Note that not every document is a correct policy document, some of them can be invoices, resumes, etc. 
+so, analyze the document text and check for compliance and security risks. Also check if it is a policy document or not. If it is not a policy document, return "Not a policy document".
 """
 
     try:
